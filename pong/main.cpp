@@ -7,18 +7,22 @@
 
 // секция данных игры  
 typedef struct {
-    float x, y, width, height, rad, dx, dy, speed;
+    float x, y, width, height;
     HBITMAP hBitmap;//хэндл к спрайту шарика 
 } sprite;
 
 sprite racket;//ракетка игрока
 
-enum items_ {
+enum class items_ {
     hemlet,
     sword,
     axe
 };
 
+struct item_element {
+    items_ itemID;
+    sprite spr;
+};
 
 struct {
     int score, balls;//количество набранных очков и оставшихся "жизней"
@@ -36,9 +40,9 @@ HBITMAP hBack;// хэндл для фонового изображения
 //cекция кода
 struct location_ {
     HBITMAP bitmap;
+    std::vector<item_element> items;
 };
 
-std::vector <player_> a;
 
 struct player_ {
     float x, y, width, height;
@@ -60,6 +64,32 @@ void InitGame()
     
 
     location[0].bitmap = (HBITMAP)LoadImageA(NULL, "loc0.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+
+    item_element i;
+    i.itemID = items_::hemlet;
+    i.spr.x = window.width / 2.;
+    i.spr.y = window.height - 50;
+    i.spr.height = 50;
+    i.spr.width = 50;
+    i.spr.hBitmap = (HBITMAP)LoadImageA(NULL, "hemlet.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+    location[0].items.push_back(i);
+
+    i.itemID = items_::sword;
+    i.spr.x = window.width / 2.+50;
+    i.spr.y = window.height - 50;
+    i.spr.height = 50;
+    i.spr.width = 50;
+    i.spr.hBitmap = (HBITMAP)LoadImageA(NULL, "sword.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+    location[0].items.push_back(i);
+
+    i.itemID = items_::axe;
+    i.spr.x = window.width / 2. - 50;
+    i.spr.y = window.height - 50;
+    i.spr.height = 50;
+    i.spr.width = 50;
+    i.spr.hBitmap = (HBITMAP)LoadImageA(NULL, "axe.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+    location[0].items.push_back(i);
+
     location[1].bitmap = (HBITMAP)LoadImageA(NULL, "loc1.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
     location[2].bitmap = (HBITMAP)LoadImageA(NULL, "loc2.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 }
@@ -112,6 +142,15 @@ void ShowBitmap(HDC hDC, int x, int y, int x1, int y1, HBITMAP hBitmapBall, bool
 void ShowRacketAndBall()
 {
     ShowBitmap(window.context, 0, 0, window.width, window.height, location[player.current_location].bitmap);//задний фон
+
+    int cnt = location[player.current_location].items.size();
+    for (int i = 0;i < cnt;i++)
+    {
+        auto cloc = location[player.current_location];
+        auto loc_items = cloc.items;
+        ShowBitmap(window.context, loc_items[i].spr.x, loc_items[i].spr.y,loc_items[i].spr.width, loc_items[i].spr.height, loc_items[i].spr.hBitmap);// ракетка игрока
+        
+    }
 
 
     ShowBitmap(window.context, player.x - player.width / 2., player.y, player.width, player.height, player.bitmap);// ракетка игрока
