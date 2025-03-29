@@ -48,6 +48,7 @@ struct player_ {
     float x, y, width, height;
     HBITMAP bitmap;
     int current_location = 0;
+    std::vector<item_element> items;
 };
 
 location_ location[3];
@@ -159,6 +160,25 @@ void ShowRacketAndBall()
     
 }
 
+void pick()
+{
+
+
+
+    auto size = location[player.current_location].items.size();
+    for (int i = 0; i < size; i++)
+    {
+        auto element = location[player.current_location].items[i];
+        int left = element.spr.x;
+        int right = element.spr.width + left;
+        if (player.x > left and player.x < right) {
+            player.items.push_back(element);
+            location[player.current_location].items.erase(location[player.current_location].items.begin() + i);
+            return;
+        }
+    }
+}
+
 void LimitPlayer()
 {
     //player.x = max(player.x, player.width / 2.);//если коодината левого угла ракетки меньше нуля, присвоим ей ноль
@@ -171,7 +191,8 @@ void LimitPlayer()
             player.current_location = 2;
         }
     }
-    if (player.x > window.width) {
+    if (player.x > window.width) 
+    {
         player.current_location = player.current_location + 1;
         player.x = 50;
         if (player.current_location > 2)
@@ -180,6 +201,14 @@ void LimitPlayer()
         }
             
     }
+
+    if (GetAsyncKeyState('P')) 
+    {
+    
+        pick();
+    }
+   
+
 }
 
 
