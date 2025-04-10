@@ -60,7 +60,7 @@ void InitGame()
     player.bitmap = (HBITMAP)LoadImageA(NULL, "racket.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
     player.width = 50;
     player.height = 50;
-    player.x = window.width / 2.;//ракетка посередине окна
+    player.x = window.width / 4.;//ракетка посередине окна
     player.y = window.height - player.height;//чуть выше низа экрана - на высоту ракетки
     
 
@@ -156,8 +156,6 @@ void ShowRacketAndBall()
 
     ShowBitmap(window.context, player.x - player.width / 2., player.y, player.width, player.height, player.bitmap);// ракетка игрока
 
-   
-    
 }
 
 void pick()
@@ -166,17 +164,17 @@ void pick()
 
 
     auto size = location[player.current_location].items.size();
-    for (int i = 0; i < size; i++)
-    {
+    for (int i = 0; i < size; i++) {
         auto element = location[player.current_location].items[i];
         int left = element.spr.x;
-        int right = element.spr.width + left;
-        if (player.x > left and player.x < right) {
+        int right = element.spr.x + element.spr.width;
+        if (player.x <= right && player.x + player.width >= left) {
             player.items.push_back(element);
             location[player.current_location].items.erase(location[player.current_location].items.begin() + i);
             return;
         }
     }
+
 }
 
 void LimitPlayer()
@@ -210,6 +208,7 @@ void LimitPlayer()
    
 
 }
+
 
 
 
@@ -260,3 +259,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     }
 
 }
+//for (int i = 0; i < size; i++)
+//{
+//    auto element = location[player.current_location].items[i];
+//    int left = element.spr.x;
+//    int right = element.spr.width + left;
+//    if (player.x > left and player.x < right) {
+//        player.items.push_back(element);
+//        location[player.current_location].items.erase(location[player.current_location].items.begin() + i);
+//        return;
+//    }
+//}
